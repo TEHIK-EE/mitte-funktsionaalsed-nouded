@@ -1,0 +1,22 @@
+# OS generated files
+## macOS
+.DS_Store
+._*
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Linux
+*~
+
+# IDE files
+## IntelliJ IDEA
+.idea/
+*.iml
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
