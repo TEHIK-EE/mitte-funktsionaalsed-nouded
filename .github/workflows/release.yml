@@ -1,0 +1,94 @@
+name: Create Release from Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Existing tag name to create release from (e.g., 2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: alpine-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get tag hash
+        id: tag
+        run: |
+          # Verify tag exists
+          if ! git rev-parse --verify "refs/tags/${{ github.event.inputs.tag_name }}" >/dev/null 2>&1; then
+            echo "::error::Tag ${{ github.event.inputs.tag_name }} does not exist"
+            exit 1
+          fi
+          echo "tag_hash=$(git rev-parse ${{ github.event.inputs.tag_name }})" >> $GITHUB_OUTPUT
+          # Checkout the specific tag
+          git checkout ${{ github.event.inputs.tag_name }}
+
+      - name: Convert Estonian MD to PDF
+        uses: narthanaj/markdown-to-pdf-converter@v2
+        with:
+          markdown_file: 'mittefunktsionaalsed-nouded.md'
+          output_dir: '.'
+          table_of_contents: 'true'
+          highlight_style: 'github'
+          pdf_options: '{"format": "A4", "margin": {"top": "20mm", "right": "20mm", "bottom": "20mm", "left": "20mm"}}'
+          include_metadata: 'true'
+          metadata: |
+            {
+              "commit": "${{ steps.tag.outputs.tag_hash }}",
+              "versioon": "${{ github.event.inputs.tag_name }}",
+              "aeg": "${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}"
+            }
+
+      - name: Convert English MD to PDF
+        uses: narthanaj/markdown-to-pdf-converter@v2
+        with:
+          markdown_file: 'mittefunktsionaalsed-nouded.en.md'
+          output_dir: '.'
+          table_of_contents: 'true'
+          highlight_style: 'github'
+          pdf_options: '{"format": "A4", "margin": {"top": "20mm", "right": "20mm", "bottom": "20mm", "left": "20mm"}}'
+          include_metadata: 'true'
+          metadata: |
+            {
+              "commit": "${{ steps.tag.outputs.tag_hash }}",
+              "version": "${{ github.event.inputs.tag_name }}",
+              "date": "${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}"
+            }
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.tag_name }}
+          files: |
+            mittefunktsionaalsed-nouded.pdf
+            mittefunktsionaalsed-nouded.en.pdf
+            mittefunktsionaalsed-nouded.md
+            mittefunktsionaalsed-nouded.en.md
+          body: |
+            ## Tarne ${{ github.event.inputs.tag_name }}
+
+            Käesolev tarne sisaldab eesti- ja inglisekeelset versiooni mittefunktsionaalsete nõuete dokumendist Markdown ja PDF formaadis.
+            
+            This release includes both Estonian and English versions of the non-functional requirements document in Markdown and PDF formats.
+
+            ### Failid:
+            - mittefunktsionaalsed-nouded.md (Eesti, Markdown)
+            - mittefunktsionaalsed-nouded.pdf (Eesti, PDF)
+            - mittefunktsionaalsed-nouded.en.md (English, Markdown)
+            - mittefunktsionaalsed-nouded.en.pdf (English, PDF)
+
+            ### Metaandmed:
+            - Commit: `${{ steps.tag.outputs.tag_hash }}`
+            - Versioon: `${{ github.event.inputs.tag_name }}`
+            - Aeg: `${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
