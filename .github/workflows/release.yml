@@ -35,8 +35,8 @@ jobs:
       - name: Convert Estonian MD to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_path: 'mittefunktsionaalsed-nouded.md'
-          output_dir: '.'
+          input_path: './mittefunktsionaalsed-nouded.md'
+          output_dir: './output'
           build_html: false
           build_pdf: true
           table_of_contents: false
@@ -45,8 +45,8 @@ jobs:
       - name: Convert English MD to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_path: 'mittefunktsionaalsed-nouded.en.md'
-          output_dir: '.'
+          input_path: './mittefunktsionaalsed-nouded.en.md'
+          output_dir: './output'
           build_html: false
           build_pdf: true
           table_of_contents: false
@@ -57,8 +57,8 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.tag_name }}
           files: |
-            mittefunktsionaalsed-nouded.pdf
-            mittefunktsionaalsed-nouded.en.pdf
+            output/mittefunktsionaalsed-nouded.pdf
+            output/mittefunktsionaalsed-nouded.en.pdf
             mittefunktsionaalsed-nouded.md
             mittefunktsionaalsed-nouded.en.md
           body: |
