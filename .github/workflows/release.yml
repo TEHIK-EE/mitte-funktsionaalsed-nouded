@@ -32,15 +32,36 @@ jobs:
           # Checkout the specific tag
           git checkout ${{ github.event.inputs.tag_name }}
 
+      - name: Set up Pandoc with fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex fonts-dejavu-core
+
       - name: Convert Estonian MD to PDF
-        uses: docker://pandoc/latex:latest
-        with:
-          args: mittefunktsionaalsed-nouded.md -o mittefunktsionaalsed-nouded.pdf --pdf-engine=xelatex --variable geometry:margin=20mm --variable mainfont="DejaVu Sans" --variable monofont="DejaVu Sans Mono" --variable fontsize=11pt --metadata title="Mittefunktsionaalsed nõuded ${{ github.event.inputs.tag_name }}" --metadata date="${{ github.event.repository.created_at }}" --metadata commit="${{ steps.tag.outputs.tag_hash }}"
+        run: |
+          pandoc mittefunktsionaalsed-nouded.md \
+            -o mittefunktsionaalsed-nouded.pdf \
+            --pdf-engine=xelatex \
+            --variable geometry:margin=20mm \
+            --variable mainfont="DejaVu Sans" \
+            --variable monofont="DejaVu Sans Mono" \
+            --variable fontsize=11pt \
+            --metadata title="Mittefunktsionaalsed nõuded ${{ github.event.inputs.tag_name }}" \
+            --metadata date="${{ github.event.repository.created_at }}" \
+            --metadata commit="${{ steps.tag.outputs.tag_hash }}"
 
       - name: Convert English MD to PDF
-        uses: docker://pandoc/latex:latest
-        with:
-          args: mittefunktsionaalsed-nouded.en.md -o mittefunktsionaalsed-nouded.en.pdf --pdf-engine=xelatex --variable geometry:margin=20mm --variable mainfont="DejaVu Sans" --variable monofont="DejaVu Sans Mono" --variable fontsize=11pt --metadata title="Non-functional Requirements ${{ github.event.inputs.tag_name }}" --metadata date="${{ github.event.repository.created_at }}" --metadata commit="${{ steps.tag.outputs.tag_hash }}"
+        run: |
+          pandoc mittefunktsionaalsed-nouded.en.md \
+            -o mittefunktsionaalsed-nouded.en.pdf \
+            --pdf-engine=xelatex \
+            --variable geometry:margin=20mm \
+            --variable mainfont="DejaVu Sans" \
+            --variable monofont="DejaVu Sans Mono" \
+            --variable fontsize=11pt \
+            --metadata title="Non-functional Requirements ${{ github.event.inputs.tag_name }}" \
+            --metadata date="${{ github.event.repository.created_at }}" \
+            --metadata commit="${{ steps.tag.outputs.tag_hash }}"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
