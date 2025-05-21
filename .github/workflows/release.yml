@@ -40,7 +40,6 @@ jobs:
           build_html: false
           build_pdf: true
           table_of_contents: false
-          theme: 'github'
 
       - name: Convert English MD to PDF
         uses: baileyjm02/markdown-to-pdf@v1
@@ -50,7 +49,6 @@ jobs:
           build_html: false
           build_pdf: true
           table_of_contents: false
-          theme: 'github'
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
