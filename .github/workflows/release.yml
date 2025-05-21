@@ -32,36 +32,25 @@ jobs:
           # Checkout the specific tag
           git checkout ${{ github.event.inputs.tag_name }}
 
-      - name: Set up Pandoc with fonts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc texlive-xetex fonts-dejavu-core
-
       - name: Convert Estonian MD to PDF
-        run: |
-          pandoc mittefunktsionaalsed-nouded.md \
-            -o mittefunktsionaalsed-nouded.pdf \
-            --pdf-engine=xelatex \
-            --variable geometry:margin=20mm \
-            --variable mainfont="DejaVu Sans" \
-            --variable monofont="DejaVu Sans Mono" \
-            --variable fontsize=11pt \
-            --metadata title="Mittefunktsionaalsed nõuded ${{ github.event.inputs.tag_name }}" \
-            --metadata date="${{ github.event.repository.created_at }}" \
-            --metadata commit="${{ steps.tag.outputs.tag_hash }}"
+        uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_path: 'mittefunktsionaalsed-nouded.md'
+          output_dir: '.'
+          build_html: false
+          build_pdf: true
+          table_of_contents: false
+          theme: 'github'
 
       - name: Convert English MD to PDF
-        run: |
-          pandoc mittefunktsionaalsed-nouded.en.md \
-            -o mittefunktsionaalsed-nouded.en.pdf \
-            --pdf-engine=xelatex \
-            --variable geometry:margin=20mm \
-            --variable mainfont="DejaVu Sans" \
-            --variable monofont="DejaVu Sans Mono" \
-            --variable fontsize=11pt \
-            --metadata title="Non-functional Requirements ${{ github.event.inputs.tag_name }}" \
-            --metadata date="${{ github.event.repository.created_at }}" \
-            --metadata commit="${{ steps.tag.outputs.tag_hash }}"
+        uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_path: 'mittefunktsionaalsed-nouded.en.md'
+          output_dir: '.'
+          build_html: false
+          build_pdf: true
+          table_of_contents: false
+          theme: 'github'
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
