@@ -44,7 +44,7 @@ jobs:
             --variable monofont="DejaVu Sans Mono" \
             --variable fontsize=11pt \
             --metadata title="Mittefunktsionaalsed nõuded ${{ github.event.inputs.tag_name }}" \
-            --metadata date="${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}" \
+            --metadata date="${{ github.event.repository.created_at }}" \
             --metadata commit="${{ steps.tag.outputs.tag_hash }}"
 
       - name: Convert English MD to PDF
@@ -59,7 +59,7 @@ jobs:
             --variable monofont="DejaVu Sans Mono" \
             --variable fontsize=11pt \
             --metadata title="Non-functional Requirements ${{ github.event.inputs.tag_name }}" \
-            --metadata date="${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}" \
+            --metadata date="${{ github.event.repository.created_at }}" \
             --metadata commit="${{ steps.tag.outputs.tag_hash }}"
 
       - name: Create Release
@@ -87,6 +87,6 @@ jobs:
             ### Metaandmed:
             - Commit: `${{ steps.tag.outputs.tag_hash }}`
             - Versioon: `${{ github.event.inputs.tag_name }}`
-            - Aeg: `${{ format('{0:yyyy-MM-dd}', github.event.repository.created_at) }}`
+            - Aeg: `${{ github.event.repository.created_at }}`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
