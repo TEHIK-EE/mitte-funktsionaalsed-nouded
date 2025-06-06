@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 jobs:
   create-release:
@@ -32,23 +33,34 @@ jobs:
           # Checkout the specific tag
           git checkout ${{ github.event.inputs.tag_name }}
 
-      - name: Convert Estonian MD to PDF
-        uses: baileyjm02/markdown-to-pdf@v1
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          input_path: './mittefunktsionaalsed-nouded.md'
-          output_dir: './output'
-          build_html: false
-          build_pdf: true
-          table_of_contents: false
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Convert English MD to PDF
-        uses: baileyjm02/markdown-to-pdf@v1
-        with:
-          input_path: './mittefunktsionaalsed-nouded.en.md'
-          output_dir: './output'
-          build_html: false
-          build_pdf: true
-          table_of_contents: false
+      - name: Pull PDF generation image
+        run: docker pull ghcr.io/${{ github.repository }}/pdf-generator:main
+
+      - name: Generate PDFs
+        run: |
+          # Create output directory if it doesn't exist
+          mkdir -p output
+          # Run the container with proper volume mounts
+          docker run --rm \
+            -v "$(pwd)/mittefunktsionaalsed-nouded.md:/app/input/mittefunktsionaalsed-nouded.md" \
+            -v "$(pwd)/mittefunktsionaalsed-nouded.en.md:/app/input/mittefunktsionaalsed-nouded.en.md" \
+            -v "$(pwd)/output:/app/output" \
+            ghcr.io/${{ github.repository }}/pdf-generator:main
+
+      - name: Verify PDF generation
+        run: |
+          if [ ! -f "output/mittefunktsionaalsed-nouded.pdf" ] || [ ! -f "output/mittefunktsionaalsed-nouded.en.pdf" ]; then
+            echo "::error::PDF files were not generated successfully"
+            exit 1
+          fi
+          echo "PDF files generated successfully"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
