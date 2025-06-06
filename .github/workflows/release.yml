@@ -33,6 +33,10 @@ jobs:
           # Checkout the specific tag
           git checkout ${{ github.event.inputs.tag_name }}
 
+      - name: Get repository name
+        id: repo
+        run: echo "repo_lower=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -41,7 +45,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull PDF generation image
-        run: docker pull ghcr.io/${{ github.repository }}/pdf-generator:main
+        run: docker pull ghcr.io/${{ steps.repo.outputs.repo_lower }}/pdf-generator:main
 
       - name: Generate PDFs
         run: |
@@ -52,7 +56,7 @@ jobs:
             -v "$(pwd)/mittefunktsionaalsed-nouded.md:/app/input/mittefunktsionaalsed-nouded.md" \
             -v "$(pwd)/mittefunktsionaalsed-nouded.en.md:/app/input/mittefunktsionaalsed-nouded.en.md" \
             -v "$(pwd)/output:/app/output" \
-            ghcr.io/${{ github.repository }}/pdf-generator:main
+            ghcr.io/${{ steps.repo.outputs.repo_lower }}/pdf-generator:main
 
       - name: Verify PDF generation
         run: |
