@@ -20,3 +20,11 @@ Desktop.ini
 .vscode/
 *.code-workspace
 
+##tööfailid
+uus_struktuur.md
+mittefunktsionaalsed-nouded-uus-struktuur-pealkirjade-kommentaarid.md
+
+## Local PDF generation output
+pdf-generation/output/
+.pdf-check-output/
+

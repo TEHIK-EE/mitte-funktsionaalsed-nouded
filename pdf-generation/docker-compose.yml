@@ -1,0 +1,7 @@
+services:
+  pdf-generator:
+    build: .
+    image: tehik-pdf-generator:local
+    volumes:
+      - ../mittefunktsionaalsed-nouded.md:/app/input/mittefunktsionaalsed-nouded.md:ro
+      - ./output:/app/output

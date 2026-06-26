@@ -8,7 +8,7 @@ Tervise ja Heaolu Infosüsteemide Keskuse (TEHIK) mittefunktsionaalsed nõuded (
 
 Non-functional requirements (NFR) of the Health and Welfare Information Systems Centre (TEHIK) are described in the following document:
 
-**[TEHIK non-functional requirements](mittefunktsionaalsed-nouded.en.md)**
+**[TEHIK non-functional requirements](mittefunktsionaalsed-nouded.md)**
 
 ## Versioonihaldus
 - Hetkel kehtiv MFN versioon on alati "main" harus
@@ -22,3 +22,9 @@ Non-functional requirements (NFR) of the Health and Welfare Information Systems 
 3. Tagi versiooniga commit'ist tehakse PDF ja Markdown formaadis väljundid (väljund peab sisaldama ka git commiti SHA-d)
 4. PDF ja Markdown formaadis väljundid allkirjastatakse TEHIKu poolt
 5. Allkirjastatud versioonid avalikustatakse TEHIKu arendusjuhiste veebilehele
+
+## PDF genereerimise lokaalne testimine
+```
+cd pdf-generation && docker compose up --build
+```
+Väljund: `pdf-generation/output/mittefunktsionaalsed-nouded.pdf`

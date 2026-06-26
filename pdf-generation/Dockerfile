@@ -18,9 +18,8 @@ RUN mkdir -p input output && \
 
 ENV PATH="/usr/local/bin:$PATH"
 
-COPY template.html highlight.py inject_html.py generate-pdfs.sh ./
-RUN chmod +x highlight.py && \
-    chmod +x inject_html.py && \
+COPY template.html inject_html.py generate-pdfs.sh ./
+RUN chmod +x inject_html.py && \
     chmod +x generate-pdfs.sh
 
 CMD ["/app/generate-pdfs.sh"] 
