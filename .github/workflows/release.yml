@@ -54,13 +54,12 @@ jobs:
           # Run the container with proper volume mounts
           docker run --rm \
             -v "$(pwd)/mittefunktsionaalsed-nouded.md:/app/input/mittefunktsionaalsed-nouded.md" \
-            -v "$(pwd)/mittefunktsionaalsed-nouded.en.md:/app/input/mittefunktsionaalsed-nouded.en.md" \
             -v "$(pwd)/output:/app/output" \
             ghcr.io/${{ steps.repo.outputs.repo_lower }}/pdf-generator:main
 
       - name: Verify PDF generation
         run: |
-          if [ ! -f "output/mittefunktsionaalsed-nouded.pdf" ] || [ ! -f "output/mittefunktsionaalsed-nouded.en.pdf" ]; then
+          if [ ! -f "output/mittefunktsionaalsed-nouded.pdf" ]; then
             echo "::error::PDF files were not generated successfully"
             exit 1
           fi
@@ -72,9 +71,7 @@ jobs:
           tag_name: ${{ github.event.inputs.tag_name }}
           files: |
             output/mittefunktsionaalsed-nouded.pdf
-            output/mittefunktsionaalsed-nouded.en.pdf
             mittefunktsionaalsed-nouded.md
-            mittefunktsionaalsed-nouded.en.md
           body: |
             ## Tarne ${{ github.event.inputs.tag_name }}
 
@@ -83,10 +80,8 @@ jobs:
             This release includes both Estonian and English versions of the non-functional requirements document in Markdown and PDF formats.
 
             ### Failid:
-            - mittefunktsionaalsed-nouded.md (Eesti, Markdown)
-            - mittefunktsionaalsed-nouded.pdf (Eesti, PDF)
-            - mittefunktsionaalsed-nouded.en.md (English, Markdown)
-            - mittefunktsionaalsed-nouded.en.pdf (English, PDF)
+            - mittefunktsionaalsed-nouded.md (Eesti, English, Markdown)
+            - mittefunktsionaalsed-nouded.pdf (Eesti, English, PDF)
 
             ### Metaandmed:
             - Commit: `${{ steps.tag.outputs.tag_hash }}`
